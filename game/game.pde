@@ -1,10 +1,17 @@
+/*
+ * This class is the Tic Tac Toe class, aptly named TTT and does almost everything
+ */
 class TTT{
   int x,y,w,h; // x, y coordinate of the board and width and height of the board;
-  int state[][] = new int[3][3];
-  int turn = 1;
-  int winner = 0;
-  boolean gameover = false;
+  int state[][] = new int[3][3]; // this variable tracks the 3x3 state of the board
+  int turn = 1; // Turn 1 or 2 tracks which player is playing
+  int winner = 0; // In case of a winner, this will be updated
+  boolean gameover = false; // If game is over, in which case, the game should be deactived
   
+  
+  /*
+   * This function sets up the field. One of the magic entry points of processing
+   */
   void setup(int x, int y, int w, int h){
     this.x = x;
     this.y = y;
@@ -19,12 +26,13 @@ class TTT{
     */
   }
   
+  /*
+   * Draws the board, writes Player number
+   */
   void drawBoard(){
     textSize(23);
-    if(this.turn==1 && !this.gameover)
-      text("Player: 1", 0, 23);
-    else if(this.turn==2 && !this.gameover)
-      text("Player: 2", 0, 23);
+    if(!this.gameover)
+      text("Player: "+this.turn, 0, 23);
     else 
       text("Player "+this.winner+" Wins!", 0, 23);
     //x = this.x; y=this.y; w=this.w; h=this.h;
@@ -52,6 +60,9 @@ class TTT{
           text("O", x+(i+0.25)*(w/3), y+(j+0.75)*h/3);
   }
   
+  /*
+   * This function returns the coordinate of the box the mouse is in, and uses the mouse coordinates as input 
+   */
   public int[] getCoords(int mX,int mY){
     int dX = (int) (mX-x)/(w/3);
     int dY = (int) (mY-y)/(h/3);
@@ -60,8 +71,10 @@ class TTT{
     return c;
   }
   
+  /*
+   * This function checks for a winner
+   */
   int checkBoard(){
-    
     // check horizontal
     for(int i=0; i<3; i++){
       if(state[i][0]==state[i][1] && state[i][0]==state[i][2] && state[i][0] != 0){
@@ -88,15 +101,22 @@ class TTT{
     return -1;
   }
   
+  /*
+	  EXPLANATION: Whenever we need to switch players, we need to switch between 1 and 2 only (you can't have 3 players here)
+	  so, the result is either 0b01 or 0b10 since we can see a two bit cyclic order, we can just simply exor it with 0b11
+	  EXOR'ing with 0b11 will switch the bits back and forth and this is massively faster than checking if turn is 1 then setting 2 and vice versa
+	  there is just one fast bit operation and that's it.
+  */
   void switchTurns(){
     this.turn = this.turn ^ 3;
-    /*
-      EXPLANATION: Whenever we need to switch players, we need to switch between 1 and 2 only (you can't have 3 players here)
-      so, the result is either 0b01 or 0b10 since we can see a two bit cyclic order, we can just simply exor it with 0b11
-      EXOR'ing with 0b11 will switch the bits back and forth and this is massively faster than checking if turn is 1 then setting 2 and vice versa
-      there is just one fast bit operation and 
-    */
   }
+  
+  
+  /*
+   * Whenever mouse is clicked, this function is triggered
+   * It checks the bounds of the board, and checks if the game is still running
+   * Then it plays a turn and checks if the game is over!
+   */
   void getInput(int mX, int mY){
     if(!(mX<x || mX>x+w || mY<y || mY > y+h) && !gameover){ // check bounds
       int[] co = this.getCoords(mX, mY);
