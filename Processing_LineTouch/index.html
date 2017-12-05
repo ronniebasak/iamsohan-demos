@@ -1,0 +1,56 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script src="processing.min.js"></script>
+	<script>
+		var btn=null;
+	</script>
+</head>
+<body style="margin: 0">
+	<canvas id="c" data-processing-sources="linez.pde" style="position: absolute; left: 0; top:0; margin: 0"></canvas>
+	<div style="position: fixed; bottom: 50px;">
+		<button onclick="setBtnA()">First Line</button>
+		<button onclick="setBtnB()">Second Line</button>
+	</div>
+	<script>		
+		c=document.getElementById('c');
+		var lx, ly;
+		function touchMOVE(event){
+			proc=Processing.getInstanceById('c');
+			if(!btn){
+				btn=proc.LEFT;
+			}
+			lx = event.touches[0].clientX;
+			ly = event.touches[0].clientY;
+			proc.mouseX = lx;
+			proc.mouseY=ly;
+			proc.mouseButton=btn;
+			proc.mouseDragged()
+			event.stopPropagation();
+		}
+		
+		function touchEND(event){
+			//alert("TOUCH END");
+			proc=Processing.getInstanceById('c');
+			proc.mouseX = lx;
+			proc.mouseY = ly;
+			proc.mouseReleased();
+			event.stopPropagation();	
+		}
+		
+		c.ontouchmove=touchMOVE;
+		c.ontouchend=touchEND;
+		//c.ontouchcancel=touchEND;
+		
+		function setBtnA(){
+			proc=Processing.getInstanceById('c');
+			btn = proc.LEFT;
+		}
+		
+		function setBtnB(){
+			proc=Processing.getInstanceById('c');
+			btn = proc.RIGHT;
+		}
+	</script>
+</body>
+</html>
