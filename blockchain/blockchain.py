@@ -1,6 +1,7 @@
 import time
 from hashlib import sha256
 
+
 class Block:
     def __init__(self, data=""):
         self.previous_hash=""
@@ -9,10 +10,14 @@ class Block:
         self.timestamp=int(time.time()) #only store the number of seconds
         self.nonce=0
 
+    # This will concatenate all the properties and calculate the hash, and return the hash
     def calculate_hash(self):
         thash=sha256(self.previous_hash+self.data+str(self.timestamp)+str(self.nonce))
         return thash.hexdigest()
 
+    # we calculate the hash
+    # we check if it passes our condition, if not, we mine with a different nonce
+    # if it does, we return the value
     def mine(self, difficulty):
         self.hash=self.calculate_hash()
 
